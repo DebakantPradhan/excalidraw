@@ -3,6 +3,7 @@ import {
   loginIcon,
   ExcalLogo,
   eyeIcon,
+  GoogleDriveLogo,
 } from "../../packages/excalidraw/components/icons";
 import type { Theme } from "../../packages/excalidraw/element/types";
 import { MainMenu } from "../../packages/excalidraw/index";
@@ -22,6 +23,14 @@ export const AppMainMenu: React.FC<{
     <MainMenu>
       <MainMenu.DefaultItems.LoadScene />
       <MainMenu.DefaultItems.SaveToActiveFile />
+
+      <MainMenu.Item        //Added 'save to google drive' option in main menu
+        icon={GoogleDriveLogo} // Import or create an icon
+        // onClick={handleSaveToGoogleDrive}
+      >
+        Save to Google Drive
+      </MainMenu.Item>
+      
       <MainMenu.DefaultItems.Export />
       <MainMenu.DefaultItems.SaveAsImage />
       {props.isCollabEnabled && (
