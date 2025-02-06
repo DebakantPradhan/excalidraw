@@ -1,4 +1,6 @@
 import React from "react";
+import { useGoogleAuth } from "../auth/googleAuth";
+// import { useGoogleLogin } from "@react-oauth/google";
 import {
   loginIcon,
   ExcalLogo,
@@ -19,18 +21,25 @@ export const AppMainMenu: React.FC<{
   setTheme: (theme: Theme | "system") => void;
   refresh: () => void;
 }> = React.memo((props) => {
+  const login = useGoogleAuth();
+  /*TODO: Implement logout also*/
+
+  // const login = useGoogleLogin({
+  //   onSuccess: (tokenResponse) => console.log(tokenResponse),
+  // });
+
   return (
     <MainMenu>
       <MainMenu.DefaultItems.LoadScene />
       <MainMenu.DefaultItems.SaveToActiveFile />
 
-      <MainMenu.Item        //Added 'save to google drive' option in main menu
+      <MainMenu.Item //Added 'save to google drive' option in main menu
         icon={GoogleDriveLogo} // Import or create an icon
         // onClick={handleSaveToGoogleDrive}
       >
         Save to Google Drive
       </MainMenu.Item>
-      
+
       <MainMenu.DefaultItems.Export />
       <MainMenu.DefaultItems.SaveAsImage />
       {props.isCollabEnabled && (
@@ -54,7 +63,8 @@ export const AppMainMenu: React.FC<{
         Excalidraw+
       </MainMenu.ItemLink>
       <MainMenu.DefaultItems.Socials />
-      <MainMenu.ItemLink
+
+      {/* <MainMenu.ItemLink
         icon={loginIcon}
         href={`${import.meta.env.VITE_APP_PLUS_APP}${
           isExcalidrawPlusSignedUser ? "" : "/sign-up"
@@ -62,7 +72,16 @@ export const AppMainMenu: React.FC<{
         className="highlighted"
       >
         {isExcalidrawPlusSignedUser ? "Sign in" : "Sign up"}
-      </MainMenu.ItemLink>
+      </MainMenu.ItemLink> */}
+
+      <MainMenu.Item
+        icon={loginIcon}
+        onClick={() => login()}
+        className="highlighted"
+      >
+        Sign in with Google
+      </MainMenu.Item>
+
       {import.meta.env.DEV && (
         <MainMenu.Item
           icon={eyeIcon}
