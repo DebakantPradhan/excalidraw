@@ -21,7 +21,8 @@ export const AppMainMenu: React.FC<{
   setTheme: (theme: Theme | "system") => void;
   refresh: () => void;
 }> = React.memo((props) => {
-  const login = useGoogleAuth();
+  // const login = useGoogleAuth();
+  const { login, authState } = useGoogleAuth();
   /*TODO: Implement logout also*/
 
   // const login = useGoogleLogin({
@@ -79,7 +80,7 @@ export const AppMainMenu: React.FC<{
         onClick={() => login()}
         className="highlighted"
       >
-        Sign in with Google
+        {authState.isAuthenticated ? 'Signed in' : 'Sign in with Google'}
       </MainMenu.Item>
 
       {import.meta.env.DEV && (
