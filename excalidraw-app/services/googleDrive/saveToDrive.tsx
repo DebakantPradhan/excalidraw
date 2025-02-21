@@ -1,18 +1,22 @@
 // excalidraw-app/components/GoogleDrive/SaveToDriveButton.tsx
-import React, { FC } from 'react';
-import { DriveApiService } from './api';
-import { DrivePickerService } from './picker';
+import React from "react";
+// import React, { FC } from "react";
+import { DriveApiService } from "./api";
+import { DrivePickerService } from "./picker";
 
 interface Props {
   accessToken: string;
   onSave: (fileId: string) => void;
 }
 
-export const SaveToDriveButton: React.FC<Props> = ({ accessToken, onSave }): JSX.Element => {
+export const SaveToDriveButton: React.FC<Props> = ({
+  accessToken,
+  onSave,
+}): JSX.Element => {
   const handleSave = async () => {
     const folderId = await DriveApiService.findOrCreateAppFolder(accessToken);
     const picker = await DrivePickerService.createPicker(accessToken, folderId);
-    
+
     picker.setCallback((data) => {
       if (data.action === google.picker.Action.PICKED) {
         const documents = data[google.picker.Response.DOCUMENTS];
@@ -22,7 +26,7 @@ export const SaveToDriveButton: React.FC<Props> = ({ accessToken, onSave }): JSX
         }
       }
     });
-    
+
     picker.build().setVisible(true);
   };
 

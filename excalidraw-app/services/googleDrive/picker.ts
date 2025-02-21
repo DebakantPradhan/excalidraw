@@ -1,13 +1,16 @@
 // excalidraw-app/services/googleDrive/picker.ts
-import { DRIVE_CONFIG } from './config';
-declare var google: any;
-import 'google.picker';
-import 'gapi';
+import { DRIVE_CONFIG } from "./config";
+import "google.picker";
+import "gapi";
+declare let google: any;
 
 export class DrivePickerService {
-  static async createPicker(accessToken: string, folderId: string): Promise<google.picker.PickerBuilder> {
+  static async createPicker(
+    accessToken: string,
+    folderId: string,
+  ): Promise<google.picker.PickerBuilder> {
     await new Promise((resolve) => {
-      gapi.load('picker', resolve);
+      gapi.load("picker", resolve);
     });
 
     const view = new google.picker.DocsView(google.picker.ViewId.DOCS)

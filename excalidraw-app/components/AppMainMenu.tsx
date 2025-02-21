@@ -2,13 +2,19 @@ import React from "react";
 import { useGoogleAuth } from "../auth/googleAuth";
 // import { useGoogleLogin } from "@react-oauth/google";
 
-import { SaveToDriveButton } from "../services/googleDrive/saveToDrive";
+// import { SaveToDriveButton } from "../services/googleDrive/saveToDrive";
 import { DriveApiService } from "../services/googleDrive/api";
 import { DRIVE_CONFIG } from "../services/googleDrive/config";
 
-
-import type { ExcalidrawImperativeAPI,AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
+import type {
+  ExcalidrawImperativeAPI,
+  AppState,
+  BinaryFiles,
+} from "@excalidraw/excalidraw/types";
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/element/types";
+import { getDefaultAppState } from "../../packages/excalidraw/appState";
+// import type { NormalizedZoomValue } from "../../packages/excalidraw/types";
+import { getNormalizedZoom } from "../../packages/excalidraw/scene/index";
 
 import {
   loginIcon,
@@ -18,7 +24,7 @@ import {
 } from "../../packages/excalidraw/components/icons";
 import type { Theme } from "../../packages/excalidraw/element/types";
 import { MainMenu } from "../../packages/excalidraw/index";
-import { isExcalidrawPlusSignedUser } from "../app_constants";
+// import { isExcalidrawPlusSignedUser } from "../app_constants";
 import { LanguageList } from "../app-language/LanguageList";
 import { saveDebugState } from "./DebugCanvas";
 
@@ -139,7 +145,6 @@ export const AppMainMenu: React.FC<{
       return;
     }
 
-
     try {
       // Get or create Excalidraw folder
       const folderId = await DriveApiService.findOrCreateAppFolder(
@@ -151,7 +156,9 @@ export const AppMainMenu: React.FC<{
         "Enter file name:",
         `excalidraw-${new Date().toISOString()}.excalidraw`,
       );
-      if (!fileName) return;
+      if (!fileName) {
+        return;
+      }
 
       // TODO: Replace this with actual scene data
       // const sceneData = {
@@ -171,11 +178,11 @@ export const AppMainMenu: React.FC<{
 
       const sceneData = {
         type: "excalidraw",
-        version: 2, 
+        version: 2,
         source: "https://excalidraw.com",
         elements: props.excalidrawAPI.getSceneElements(),
         appState: props.excalidrawAPI.getAppState(),
-        files: props.excalidrawAPI.getFiles()
+        files: props.excalidrawAPI.getFiles(),
       };
 
       // const sceneData = await saveAsJSON(
@@ -225,7 +232,6 @@ export const AppMainMenu: React.FC<{
       console.error("Error saving to Drive:", error);
     }
   };
-
 
   interface ExcalidrawSceneData {
     type: string;
@@ -291,8 +297,6 @@ export const AppMainMenu: React.FC<{
               throw new Error("Failed to fetch file from Drive");
             }
 
-            
-
             const sceneData = await response.json();
             console.log("File imported successfully", sceneData);
             // TODO: Load the file content into Excalidraw
@@ -312,20 +316,40 @@ export const AppMainMenu: React.FC<{
             // Update the scene using excalidrawAPI
             props.excalidrawAPI!.updateScene({
               elements: validatedScene.elements,
+              // appState: {
+              //   ...currentAppState, // Start with current state as base
+              //   ...validatedScene.appState, // Override with imported state
+              //   // Ensure required properties are set
+              //   theme: validatedScene.appState?.theme || currentAppState.theme,
+              //   collaborators: new Map(),
+              //   currentChartType: validatedScene.appState?.currentChartType || "bar",
+              //   viewBackgroundColor: validatedScene.appState?.viewBackgroundColor || "#ffffff",
+              //   gridSize: validatedScene.appState?.gridSize || 20,
+              //   name: validatedScene.appState?.name || currentAppState.name,
+              //   viewModeEnabled: validatedScene.appState?.viewModeEnabled ?? false,
+              //   zenModeEnabled: validatedScene.appState?.zenModeEnabled ?? false,
+              //   gridModeEnabled: validatedScene.appState?.gridModeEnabled ?? false,
+              //   objectsSnapModeEnabled: validatedScene.appState?.objectsSnapModeEnabled ?? false,
+              // },
               appState: {
-                ...currentAppState, // Start with current state as base
-                ...validatedScene.appState, // Override with imported state
-                // Ensure required properties are set
+                ...getDefaultAppState(),
+                ...validatedScene.appState,
+                // Keep essential properties
                 theme: validatedScene.appState?.theme || currentAppState.theme,
                 collaborators: new Map(),
-                currentChartType: validatedScene.appState?.currentChartType || "bar",
-                viewBackgroundColor: validatedScene.appState?.viewBackgroundColor || "#ffffff",
-                gridSize: validatedScene.appState?.gridSize || 20,
+                currentChartType:
+                  validatedScene.appState?.currentChartType || "bar",
+                viewBackgroundColor:
+                  validatedScene.appState?.viewBackgroundColor || "#ffffff",
                 name: validatedScene.appState?.name || currentAppState.name,
-                viewModeEnabled: validatedScene.appState?.viewModeEnabled ?? false,
-                zenModeEnabled: validatedScene.appState?.zenModeEnabled ?? false,
-                gridModeEnabled: validatedScene.appState?.gridModeEnabled ?? false,
-                objectsSnapModeEnabled: validatedScene.appState?.objectsSnapModeEnabled ?? false,
+                // Reset view properties
+                width: window.innerWidth,
+                height: window.innerHeight,
+                zoom: { value: getNormalizedZoom(1) },
+                scrollX: 0,
+                scrollY: 0,
+                offsetTop: 0,
+                offsetLeft: 0,
               },
             });
 

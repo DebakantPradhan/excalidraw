@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGoogleLogin} from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import type { TokenResponse } from "@react-oauth/google";
 import type { GoogleAuthResponse, AuthState } from "./types";
 
@@ -20,7 +20,12 @@ export const useGoogleAuth = () => {
       }));
       return response;
     },
-    onError: (errorResponse: Pick<TokenResponse, "error" | "error_description" | "error_uri">) => {
+    onError: (
+      errorResponse: Pick<
+        TokenResponse,
+        "error" | "error_description" | "error_uri"
+      >,
+    ) => {
       console.error("Google Login Failed:", errorResponse);
       setAuthState({
         isAuthenticated: false,
